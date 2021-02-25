@@ -1,0 +1,35 @@
+<div>
+  <div *ngIf="loadComplete" class="edit-form">
+    <h2>Tournament Sessions</h2>
+    <h3>{{ currentTournament.title }} - {{ currentTournament.eventdate }}</h3>
+    <h4>Tables: {{ currentTournament.tablesAmt }}</h4>
+    <!-- <form [formGroup]="sessionForm"> -->
+      <table class="session-chart">
+        <tr>
+          <th></th>
+          <th *ngFor="let tour of [].constructor(tours); let i = index">
+            <h5>Tour {{ i + 1 }}</h5>
+          </th>
+        </tr>
+        <tr *ngFor="let table of [].constructor(tables); let j = index">
+          <td><h5> Table {{ j + 1 }}</h5></td>
+          <td *ngFor="let tour of [].constructor(tours); let i = index">
+            <p>Session {{ i + 1 }}, {{ j + 1 }}</p>
+            <p>Deals played: {{ sessionsMap[i][j].dealsPlayed }}</p>
+            <a *ngIf="!sessionsMap[i][j].id" class="badge badge-warning"
+              routerLink="/newprotocol/{{ sessionsMap[i][j].tournamentId }}/{{ sessionsMap[i][j].tourNumber }}/{{ sessionsMap[i][j].tableNumber }}">
+              Protocol
+            </a>
+            <a *ngIf="sessionsMap[i][j].id" class="badge badge-success" routerLink="/protocol/{{ sessionsMap[i][j].id }}">
+              Protocol
+            </a>
+          </td>
+        </tr>
+      </table>
+    <!-- </form> -->
+  </div>
+  <div *ngIf="!loadComplete">
+    <br />
+    <p>Loading...</p>
+  </div>
+</div>

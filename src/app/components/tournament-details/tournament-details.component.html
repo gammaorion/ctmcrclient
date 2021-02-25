@@ -1,0 +1,116 @@
+<div>
+  <div *ngIf="currentTournament.id" class="edit-form">
+    <h4>Tournament</h4>
+    <form>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          [(ngModel)]="currentTournament.title"
+          name="title"
+        />
+      </div>
+      <div class="form-group">
+        <label for="eventdate">Event date</label>
+        <input
+          type="text"
+          class="form-control"
+          id="eventdate"
+          [(ngModel)]="currentTournament.eventdate"
+          name="eventdate"
+        />
+      </div>
+      <div class="form-group">
+        <label for="place">Place</label>
+        <input
+          type="text"
+          class="form-control"
+          id="place"
+          [(ngModel)]="currentTournament.place"
+          name="place"
+        />
+      </div>
+      <div class="form-group">
+        <label for="tables_amount">Amount of tables</label>
+        <select
+          name="tables_amount"
+          class="form-control"
+          [(ngModel)]="currentTournament.tablesAmt"
+          id="tables_amount"
+          required
+          >
+          <option
+            *ngFor="let tables of [3, 4, 5, 6, 7, 8]"
+            [value]="tables"
+            [attr.selected]="currentTournament.tablesAmt == tables ? true : null"
+            >{{ tables }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tours_amount">Amount of tours</label>
+        <select
+          name="tours_amount"
+          class="form-control"
+          [(ngModel)]="currentTournament.toursAmt"
+          id="tours_amount"
+          required
+          >
+          <option
+            *ngFor="let tours of [3, 4, 5, 6]"
+            [value]="tours"
+            [attr.selected]="currentTournament.toursAmt == tours ? true : null"
+            >{{ tours }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="comment">Comment</label>
+        <input
+          type="text"
+          class="form-control"
+          id="comment"
+          [(ngModel)]="currentTournament.comment"
+          name="comment"
+        />
+      </div>
+
+
+      <div class="form-group">
+        <label><strong>Status:</strong></label>
+        {{ currentTournament.isComplete ? "Complete" : "Pending" }}
+      </div>
+    </form>
+
+    <button
+      class="badge badge-primary mr-2"
+      *ngIf="currentTournament.isComplete"
+      (click)="updateComplete(false)"
+    >
+      Rollback
+    </button>
+    <button
+      *ngIf="!currentTournament.isComplete"
+      class="badge badge-primary mr-2"
+      (click)="updateComplete(true)"
+    >
+      Complete
+    </button>
+
+    <button
+      type="submit"
+      class="badge badge-success mb-2"
+      (click)="updateTournament()"
+    >
+      Update
+    </button>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!currentTournament.id">
+    <br />
+    <p>Cannot access this Tournament...</p>
+  </div>
+</div>

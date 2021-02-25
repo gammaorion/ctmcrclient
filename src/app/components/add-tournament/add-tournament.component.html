@@ -1,0 +1,90 @@
+<div>
+  <div class="submit-form">
+    <div *ngIf="!submitted">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          required
+          [(ngModel)]="tournament.title"
+          name="title"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="eventdate">Event Date</label>
+        <input
+          class="form-control"
+          id="eventdate"
+          required
+          [(ngModel)]="tournament.eventdate"
+          name="eventdate"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="place">Place</label>
+        <input
+          class="form-control"
+          id="place"
+          required
+          [(ngModel)]="tournament.place"
+          name="place"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="tables_amount">Amount of Tables</label>
+        <select
+          name="tables_amount"
+          class="form-control"
+          [(ngModel)]="tournament.tablesAmt"
+          id="tables_amount"
+          required
+          >
+          <option selected>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tours_amount">Amount of Tours</label>
+        <select
+          name="tours_amount"
+          class="form-control"
+          [(ngModel)]="tournament.toursAmt"
+          id="tours_amount"
+          required
+          >
+          <option selected>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="comment">Comment</label>
+        <input
+          class="form-control"
+          id="comment"
+          [(ngModel)]="tournament.comment"
+          name="comment"
+        />
+      </div>
+
+      <button (click)="saveTournament()" class="btn btn-success">Submit</button>
+    </div>
+
+    <div *ngIf="submitted">
+      <h4>Tournament was submitted successfully!</h4>
+      <button class="btn btn-success" (click)="newTournament()">Add</button>
+    </div>
+  </div>
+</div>

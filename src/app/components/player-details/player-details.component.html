@@ -1,0 +1,73 @@
+<div>
+  <div *ngIf="currentPlayer.id" class="edit-form">
+    <h4>Player</h4>
+    <form>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="surname"
+          [(ngModel)]="currentPlayer.surname"
+          name="surname"
+        />
+      </div>
+      <div class="form-group">
+        <label for="firstname">First Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstname"
+          [(ngModel)]="currentPlayer.firstname"
+          name="firstname"
+        />
+      </div>
+      <div class="form-group">
+        <label for="patronymic">Patronymic</label>
+        <input
+          type="text"
+          class="form-control"
+          id="patronymic"
+          [(ngModel)]="currentPlayer.patronymic"
+          name="patronymic"
+        />
+      </div>
+      <div class="form-group">
+        <label for="living">Where lives</label>
+        <input
+          type="text"
+          class="form-control"
+          id="living"
+          [(ngModel)]="currentPlayer.living"
+          name="living"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="comment">Comment</label>
+        <input
+          type="text"
+          class="form-control"
+          id="comment"
+          [(ngModel)]="currentPlayer.comment"
+          name="comment"
+        />
+      </div>
+
+    </form>
+
+    <button
+      type="submit"
+      class="badge badge-success mb-2"
+      (click)="updatePlayer()"
+    >
+      Update
+    </button>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!currentPlayer.id">
+    <br />
+    <p>Cannot access this player...</p>
+  </div>
+</div>

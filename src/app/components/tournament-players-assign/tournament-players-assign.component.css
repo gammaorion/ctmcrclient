@@ -1,0 +1,7 @@
+.players-assign, .players-assign th, .players-assign td {
+  border: 1px solid;
+}
+
+.players-assign th, .players-assign td {
+  padding: 10px;
+}

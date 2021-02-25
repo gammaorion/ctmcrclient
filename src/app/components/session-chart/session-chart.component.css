@@ -1,0 +1,7 @@
+.session-chart, .session-chart th, .session-chart td {
+  border: 1px solid;
+}
+
+.session-chart th, .session-chart td {
+  padding: 10px;
+}

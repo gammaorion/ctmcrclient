@@ -1,0 +1,29 @@
+.protocol-chart, .protocol-chart th, .protocol-chart td {
+  border: 1px solid;
+}
+
+.protocol-chart th, .protocol-chart td {
+  padding: 5px;
+}
+
+.protocol-chart th, .protocol-chart td {
+  text-align: center;
+}
+
+.player-select {
+  width: 220px;
+}
+
+.protocol-value {
+  width: 150px;
+}
+
+.deal-points {
+  text-align: left !important;
+  padding: 5px 5px 5px 50px !important;
+}
+
+.cumulative-points {
+  text-align: right !important;
+  padding: 10px 50px 10px 5px !important;
+}

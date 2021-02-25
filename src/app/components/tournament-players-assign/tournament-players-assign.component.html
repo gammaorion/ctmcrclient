@@ -1,0 +1,43 @@
+<div>
+  <div *ngIf="loadComplete" class="edit-form">
+    <h2>Tournament Players</h2>
+    <h3>{{ currentTournament.title }} - {{ currentTournament.eventdate }}</h3>
+    <h4>Tables: {{ currentTournament.tables_amount }}</h4>
+    <form [formGroup]="playersForm">
+      <table class="form-group players-assign" formArrayName="players">
+        <tr>
+          <th>Number</th>
+          <th>Player</th>
+        </tr>
+        <tr *ngFor="let player of groupPlayers().controls; let i = index" [formGroupName]="i">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <select
+              class="form-control"
+              formControlName="gplayer"
+              >
+              <option *ngFor="let plr of allPlayers" [value]="plr.id">
+                {{ plr.surname }} {{ plr.firstname }}
+              </option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <h3>
+        <button
+          type="submit"
+          class="badge badge-success"
+          (click)="savePlayersForTournament()"
+        >
+          Save changes
+        </button>
+      </h3>
+    </form>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!loadComplete">
+    <br />
+    <p>Loading...</p>
+  </div>
+</div>

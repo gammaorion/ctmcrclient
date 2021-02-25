@@ -1,0 +1,139 @@
+<div>
+  <div *ngIf="loadComplete">
+    <h3>Tournament: {{ tournamentTitle }}</h3>
+    <h4>Tour: {{ tourNumber }}, table: {{ tableNumber }}</h4>
+    <table class="form-group protocol-chart">
+      <tr [formGroup]="sessionForm">
+          <th colspan="4"></th>
+          <th>
+            <select
+              class="form-control player-select"
+              formControlName="playerEast"
+              (change)="changeSessionPlayer($event)"
+              name="player-east"
+              >
+              <option *ngFor="let plr of numberedPlayers" [value]="plr.id">
+                {{ plr.value }}
+              </option>
+            </select>
+          </th>
+          <th>
+            <select
+              class="form-control player-select"
+              formControlName="playerSouth"
+              (change)="changeSessionPlayer($event)"
+              name="player-south"
+              >
+              <option *ngFor="let plr of numberedPlayers" [value]="plr.id">
+                {{ plr.value }}
+              </option>
+            </select>
+          </th>
+          <th>
+            <select
+              class="form-control player-select"
+              formControlName="playerWest"
+              (change)="changeSessionPlayer($event)"
+              name="player-west"
+              >
+              <option *ngFor="let plr of numberedPlayers" [value]="plr.id">
+                {{ plr.value }}
+              </option>
+            </select>
+          </th>
+          <th>
+            <select
+              class="form-control player-select"
+              formControlName="playerNorth"
+              (change)="changeSessionPlayer($event)"
+              name="player-north"
+              >
+              <option *ngFor="let plr of numberedPlayers" [value]="plr.id">
+                {{ plr.value }}
+              </option>
+            </select>
+          </th>
+      </tr>
+      <tr>
+        <th>N</th>
+        <th class="protocol-value">Pts</th>
+        <th class="protocol-value">Winner</th>
+        <th class="protocol-value">Feeder</th>
+        <th>EAST</th>
+        <th>SOUTH</th>
+        <th>WEST</th>
+        <th>NORTH</th>
+      </tr>
+      <ng-container [formGroup]="dealActions">
+        <ng-container formArrayName="actions">
+        <ng-container *ngFor="let deal of dealActionsArray.controls; let i = index" [formGroupName]="i">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>
+              <input class="form-control"
+                formControlName="handPoints"
+                [dealindex]="i"
+                (change)="changeDealPoints($event)"
+              />
+            </td>
+            <td>
+              <select
+                class="form-control"
+                formControlName="dealWinner"
+                [dealindex]="i"
+                (change)="changeDealWinner($event)"
+              >
+                <option value="-1">none</option>
+                <option *ngFor="let plr of playerNumbers; let i = index" [value]="plr.id">{{ plr.num }}</option>
+              </select>
+            </td>
+            <td>
+              <select
+                class="form-control"
+                formControlName="dealFeeder"
+                [dealindex]="i"
+                (change)="changeDealFeeder($event)"
+              >
+                <option value="-1">none</option>
+                <option *ngFor="let plr of playerNumbers; let i = index" [value]="plr.id">{{ plr.num }}</option>
+              </select>
+            </td>
+              <td class="deal-points">{{ playersPoints[i].EAST.dealPoints }}</td>
+              <td class="deal-points">{{ playersPoints[i].SOUTH.dealPoints }}</td>
+              <td class="deal-points">{{ playersPoints[i].WEST.dealPoints }}</td>
+              <td class="deal-points">{{ playersPoints[i].NORTH.dealPoints }}</td>
+          </tr>
+          <tr *ngIf="i > 0">
+            <td colspan="4"></td>
+            <td class="cumulative-points">{{ playersPoints[i].EAST.cumulativePoints }}</td>
+            <td class="cumulative-points">{{ playersPoints[i].SOUTH.cumulativePoints }}</td>
+            <td class="cumulative-points">{{ playersPoints[i].WEST.cumulativePoints }}</td>
+            <td class="cumulative-points">{{ playersPoints[i].NORTH.cumulativePoints }}</td>
+          </tr>
+        </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <tr>
+        <td colspan="4"></td>
+        <td class="cumulative-points">{{ playersTourPoints.EAST }}</td>
+        <td class="cumulative-points">{{ playersTourPoints.SOUTH }}</td>
+        <td class="cumulative-points">{{ playersTourPoints.WEST }}</td>
+        <td class="cumulative-points">{{ playersTourPoints.NORTH }}</td>
+      </tr>
+    </table>
+
+    <h4><button
+      type="submit"
+      class="badge badge-success mb-2"
+      (click)="saveProtocol()"
+    >
+      Save protocol
+    </button></h4>
+  </div>
+
+  <div *ngIf="!loadComplete">
+    <br />
+    <p>Loading...</p>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="list row">
+  <div class="col-md-6">
+    <h4>Players List
+      <a class="badge badge-success" routerLink="/addplayer/">Add</a>
+    </h4>
+
+    <ul class="list-group">
+      <li
+        class="list-group-item"
+        *ngFor="let player of players; let i = index"
+        [class.active]="i == currentIndex"
+        (click)="setActivePlayer(player, i)"
+      >
+        {{ player.surname }} {{ player.firstname }}
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <div *ngIf="currentPlayer">
+      <h4>Player</h4>
+      <div>
+        <label><strong>Surname:</strong></label>
+        {{ currentPlayer.surname }}
+      </div>
+      <div>
+        <label><strong>First Name:</strong></label>
+        {{ currentPlayer.firstname }}
+      </div>
+      <div>
+        <label><strong>Patronymic:</strong></label>
+        {{ currentPlayer.patronymic }}
+      </div>
+      <div>
+        <label><strong>Where lives:</strong></label>
+        {{ currentPlayer.living }}
+      </div>
+      <div>
+        <label><strong>Comment:</strong></label>
+        {{ currentPlayer.comment || '(none)' }}
+      </div>
+
+      <a class="badge badge-warning" routerLink="/players/{{ currentPlayer.id }}">
+        Edit
+      </a>
+    </div>
+
+    <div *ngIf="!currentPlayer">
+      <br />
+      <p>Please select a player...</p>
+    </div>
+  </div>
+</div>
