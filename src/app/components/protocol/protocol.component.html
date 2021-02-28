@@ -125,10 +125,17 @@
 
     <h4><button
       type="submit"
-      class="badge badge-success mb-2"
+      [disabled]="!sessionForm.dirty && !dealActions.dirty"
+      class="btn btn-success mb-2"
       (click)="saveProtocol()"
     >
       Save protocol
+    </button>&nbsp;&nbsp;<button
+      [disabled]="sessionForm.dirty || dealActions.dirty"
+      class="btn btn-warning mb-2"
+      (click)="closeProtocol()"
+    >
+      Close protocol
     </button></h4>
   </div>
 

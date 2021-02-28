@@ -17,6 +17,7 @@ import { SessionPlayerService } from 'src/app/services/session-player.service';
 import { DealService } from 'src/app/services/deal.service';
 
 import { articles } from 'src/share/article.dictionary';
+import { dealresults } from 'src/share/dealresult.dictionary';
 
 @Component({
   selector: 'app-protocol',
@@ -58,6 +59,7 @@ export class ProtocolComponent implements OnInit {
     if (this.route.snapshot.params.tournament) {
       this.createNewSession();
     } else {
+      this.sessionId = this.route.snapshot.params.id;
       this.loadExistingSession();
     }
   }
@@ -85,7 +87,7 @@ export class ProtocolComponent implements OnInit {
   }
 
   loadExistingSession(): void {
-    this.sessionService.getOne(this.route.snapshot.params.id)
+    this.sessionService.getOne(this.sessionId)
       .subscribe(
         data => {
           this.currentSession = data;
@@ -710,18 +712,128 @@ export class ProtocolComponent implements OnInit {
   saveProtocol(): void {
     console.log("Save protocol clicked");
 
+    const nameWinds = {
+      "playerEast": "EAST",
+      "playerSouth": "SOUTH",
+      "playerWest": "WEST",
+      "playerNorth": "NORTH"
+    };
+
     // part 1 of 3: collect players for this session
     //  from the drop lists on the top - this.sessionForm
+    //  sessionPlayers: playerId, sessionId, wind (no points for now)
+    const sessionPlayersUpdate = [];
 
+    for (let cWind in nameWinds) {
+      let sessionPlayer = {
+        playerId: this.sessionForm.get(cWind).value,
+        sessionId: this.currentSession.id,
+        wind: nameWinds[cWind],
+        gamePoints: this.playersPoints[15][nameWinds[cWind]].cumulativePoints,
+        tourPoints: this.playersTourPoints[nameWinds[cWind]]
+      };
+
+      sessionPlayersUpdate.push(sessionPlayer);
+    }
 
     // part 2 of 3: collect deal actions for this session
     //  from input and drop lists on the left - this.dealActionsArray
+    //  deals: sessionId, dealNumber, result (code), handPoints (dealComment will be later)
+    const dealActionsUpdate = [];
 
+    for (let i = 0; i < 16; ++i) {
+      const dealPoints = this.dealActionsArray.at(i).get('handPoints').value;
+
+      if (dealPoints === '') {
+        let restIsEmpty = true;
+        for (let j = i + 1; j < 16; ++j) {
+          if (this.dealActionsArray.at(j).get('handPoints').value !== '') {
+            restIsEmpty = false;
+            break;
+          }
+        }
+
+        if (restIsEmpty) {
+          break;
+        }
+
+        dealActionsUpdate.push({
+          handPoints: 0,
+          result: dealresults.DRAW,
+          dealNumber: i + 1,
+          sessionId: this.currentSession.id,
+          players: []
+        });
+      } else if (dealPoints == 0) {
+        dealActionsUpdate.push({
+          handPoints: 0,
+          result: dealresults.DRAW,
+          dealNumber: i + 1,
+          sessionId: this.currentSession.id,
+          players: []
+        });
+      } else {
+        const dealFeeder = this.dealActionsArray.at(i).get('dealFeeder').value;
+
+        dealActionsUpdate.push({
+          handPoints: +dealPoints,
+          result: dealFeeder === -1 ? dealresults.SELFWIN : dealresults.DISCARDWIN,
+          dealNumber: i + 1,
+          sessionId: this.currentSession.id,
+          players: []
+        });
+      }
+    }
 
     // part 3 of 3: add players' info to deal actions
     //  it can be taken from the chart this.playersPoints
     //  (later cells will contain penalties and comments)
+    //  dealPlayers: playerId, gamePoints, article (dealId will be determined at the back-end)
 
+    // debugger;
+
+
+    for (let i = 0; i < 16; ++i) {
+      if (dealActionsUpdate.length <= i) {
+        break;
+      }
+
+      let dealAction = dealActionsUpdate[i];
+
+      // todo: there will be many records later (penalties)
+      for (let cWind in nameWinds) {
+        let dealPlayer = {
+          article: dealAction.result == dealresults.DRAW ? articles.DRAW : this.playersPoints[i][nameWinds[cWind]].dealCode,
+          gamePoints: this.playersPoints[i][nameWinds[cWind]].dealPoints,
+          comment: this.playersPoints[i][nameWinds[cWind]].comment,
+          playerId: this.sessionForm.get(cWind).value
+        };
+
+        dealAction.players.push(dealPlayer);
+      }
+    }
+
+    console.log("information collected");
+
+    const protocolData = {
+      sessionPlayers: sessionPlayersUpdate,
+      dealActions: dealActionsUpdate
+    };
+
+    this.sessionService.saveProtocol(this.currentSession.id, protocolData)
+      .subscribe(
+        data => {
+
+
+          this.sessionForm.markAsPristine();
+          this.dealActions.markAsPristine();
+
+          console.log("Saved all well");
+        },
+        err => {
+          console.log("Error: " + (err.message || "unknown"));
+        }
+      );
   }
 
 }

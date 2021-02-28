@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Session } from '../models/session.model';
 
 const baseUrl = 'http://localhost:8092/api/sessions';
+const protocolUrl = 'http://localhost:8092/api/protocols';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +35,9 @@ export class SessionService {
 
   delete(id: any): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
+  }
+
+  saveProtocol(id: any, data: any): Observable<any> {
+    return this.http.put(`${protocolUrl}/save/${id}`, data);
   }
 };
