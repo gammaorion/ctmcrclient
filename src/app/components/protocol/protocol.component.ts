@@ -45,6 +45,7 @@ export class ProtocolComponent implements OnInit {
   dealActions?: FormGroup;  // left selectors (hand value - winner - feeder)
 
   loadComplete = false;
+  protocolMessage = '';
 
   constructor(
     private sessionService: SessionService,
@@ -710,8 +711,6 @@ export class ProtocolComponent implements OnInit {
    * arrays are created and sent to back-end
    */
   saveProtocol(): void {
-    console.log("Save protocol clicked");
-
     const nameWinds = {
       "playerEast": "EAST",
       "playerSouth": "SOUTH",
@@ -719,24 +718,7 @@ export class ProtocolComponent implements OnInit {
       "playerNorth": "NORTH"
     };
 
-    // part 1 of 3: collect players for this session
-    //  from the drop lists on the top - this.sessionForm
-    //  sessionPlayers: playerId, sessionId, wind (no points for now)
-    const sessionPlayersUpdate = [];
-
-    for (let cWind in nameWinds) {
-      let sessionPlayer = {
-        playerId: this.sessionForm.get(cWind).value,
-        sessionId: this.currentSession.id,
-        wind: nameWinds[cWind],
-        gamePoints: this.playersPoints[15][nameWinds[cWind]].cumulativePoints,
-        tourPoints: this.playersTourPoints[nameWinds[cWind]]
-      };
-
-      sessionPlayersUpdate.push(sessionPlayer);
-    }
-
-    // part 2 of 3: collect deal actions for this session
+    // part 1 of 3: collect deal actions for this session
     //  from input and drop lists on the left - this.dealActionsArray
     //  deals: sessionId, dealNumber, result (code), handPoints (dealComment will be later)
     const dealActionsUpdate = [];
@@ -785,13 +767,17 @@ export class ProtocolComponent implements OnInit {
       }
     }
 
-    // part 3 of 3: add players' info to deal actions
+    // part 2 of 3: add players' info to deal actions
     //  it can be taken from the chart this.playersPoints
     //  (later cells will contain penalties and comments)
     //  dealPlayers: playerId, gamePoints, article (dealId will be determined at the back-end)
 
-    // debugger;
-
+    const handsByWinds = {
+      'playerEast': 0,
+      'playerSouth': 0,
+      'playerWest': 0,
+      'playerNorth': 0
+    };
 
     for (let i = 0; i < 16; ++i) {
       if (dealActionsUpdate.length <= i) {
@@ -809,11 +795,32 @@ export class ProtocolComponent implements OnInit {
           playerId: this.sessionForm.get(cWind).value
         };
 
+        if (this.playersPoints[i][nameWinds[cWind]].dealCode == articles.DISCARDWIN ||
+          this.playersPoints[i][nameWinds[cWind]].dealCode == articles.SELFWIN) {
+          handsByWinds[cWind] += 1;
+        }
+
         dealAction.players.push(dealPlayer);
       }
     }
 
-    console.log("information collected");
+    // part 3 of 3: collect players for this session
+    //  from the drop lists on the top - this.sessionForm
+    //  sessionPlayers: playerId, sessionId, wind (no points for now)
+    const sessionPlayersUpdate = [];
+
+    for (let cWind in nameWinds) {
+      let sessionPlayer = {
+        playerId: this.sessionForm.get(cWind).value,
+        sessionId: this.currentSession.id,
+        wind: nameWinds[cWind],
+        gamePoints: this.playersPoints[15][nameWinds[cWind]].cumulativePoints,
+        tournamentPoints: this.playersTourPoints[nameWinds[cWind]],
+        handsTaken: handsByWinds[cWind]
+      };
+
+      sessionPlayersUpdate.push(sessionPlayer);
+    }
 
     const protocolData = {
       sessionPlayers: sessionPlayersUpdate,
@@ -823,15 +830,46 @@ export class ProtocolComponent implements OnInit {
     this.sessionService.saveProtocol(this.currentSession.id, protocolData)
       .subscribe(
         data => {
-
-
           this.sessionForm.markAsPristine();
           this.dealActions.markAsPristine();
+          this.protocolMessage = "Saved protocol successfully";
 
-          console.log("Saved all well");
+          console.log("Saved current protocol");
         },
         err => {
-          console.log("Error: " + (err.message || "unknown"));
+          let errMessage = err.message || "unknown";
+          console.log("Error: " + errMessage);
+          this.protocolMessage = "Problems with saving protocol: " + errMessage;
+        }
+      );
+  }
+
+  closeProtocol(): void {
+    this.sessionService.closeProtocol(this.currentSession.id)
+      .subscribe(
+        data => {
+          this.currentSession.isComplete = true;
+          this.protocolMessage = "Closed protocol successfully";
+        },
+        err => {
+          let errMessage = err.message || "unknown";
+          console.log("Error: " + errMessage);
+          this.protocolMessage = "Problems with closing protocol: " + errMessage;
+        }
+      );
+  }
+
+  reopenProtocol(): void {
+    this.sessionService.reopenProtocol(this.currentSession.id)
+      .subscribe(
+        data => {
+          this.currentSession.isComplete = false;
+          this.protocolMessage = "Reopened protocol successfully";
+        },
+        err => {
+          let errMessage = err.message || "unknown";
+          console.log("Error: " + errMessage);
+          this.protocolMessage = "Problems with reopening protocol: " + errMessage;
         }
       );
   }

@@ -24,6 +24,8 @@ export class SessionChartComponent implements OnInit {
   sessionForm?: any;
 
   loadComplete = false;
+  allSessionsClosed = false;
+  message = '';
 
   constructor(
     private tournamentService: TournamentService,
@@ -68,7 +70,8 @@ export class SessionChartComponent implements OnInit {
                 tournamentId: this.tournamentId,
                 tourNumber: i + 1,
                 tableNumber: j + 1,
-                dealsPlayed: 0
+                dealsPlayed: 0,
+                isComplete: false
               };
               currentTour.push(emptySession);
             }
@@ -104,15 +107,45 @@ export class SessionChartComponent implements OnInit {
       'sessionmap' : new FormArray([])
     });
 
+    this.allSessionsClosed = true;
+
     for (let i = 0; i < this.tours; ++i) {
       let tourForm = new FormArray([]);
 
       for (let j = 0; j < this.tables; ++j) {
         let currentSession = this.sessionsMap[i][j];
         tourForm.controls.push(currentSession);
+        this.allSessionsClosed &&= !!currentSession.isComplete;
       }
 
       this.getSessionMapForm().controls.push(tourForm);
     }
   }
+
+  closeTournament(): void {
+    this.changeTournamentComplete(true);
+  }
+
+  reopenTournament(): void {
+    this.changeTournamentComplete(false);
+  }
+
+  changeTournamentComplete(status: boolean): void {
+    const data = {
+      isComplete: status
+    };
+
+    this.tournamentService.update(this.currentTournament.id, data)
+      .subscribe(
+        response => {
+          this.currentTournament.isComplete = status;
+          console.log("Updated tournament completion status");
+          this.message = response.message;
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  }
+
 };

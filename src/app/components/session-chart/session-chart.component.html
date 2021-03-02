@@ -26,6 +26,25 @@
           </td>
         </tr>
       </table>
+
+      <h4>
+        <ng-container *ngIf="!currentTournament.isComplete">
+          <button
+            class="btn btn-warning mb-2"
+            (click)="closeTournament()"
+            [disabled]="!allSessionsClosed"
+          >
+          Close Tournament</button>
+        </ng-container>
+        <ng-container *ngIf="currentTournament.isComplete">
+          <button
+            class="btn btn-danger mb-2"
+            (click)="reopenTournament()"
+          >
+          Reopen Tournament</button>
+        </ng-container>
+      </h4>
+      <p>{{ message }}</p>
     <!-- </form> -->
   </div>
   <div *ngIf="!loadComplete">

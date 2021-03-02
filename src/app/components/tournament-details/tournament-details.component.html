@@ -86,17 +86,10 @@
 
     <button
       class="badge badge-primary mr-2"
-      *ngIf="currentTournament.isComplete"
+      [disabled]="!currentTournament.isComplete"
       (click)="updateComplete(false)"
     >
-      Rollback
-    </button>
-    <button
-      *ngIf="!currentTournament.isComplete"
-      class="badge badge-primary mr-2"
-      (click)="updateComplete(true)"
-    >
-      Complete
+      Reopen
     </button>
 
     <button

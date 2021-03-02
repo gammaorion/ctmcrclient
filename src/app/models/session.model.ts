@@ -4,5 +4,6 @@ export class Session {
   tourNumber?: number;
   tableNumber?: number;
   dealsPlayed?: number;
+  sessionComment?: string;
   isComplete?: boolean;
 }

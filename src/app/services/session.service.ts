@@ -40,4 +40,12 @@ export class SessionService {
   saveProtocol(id: any, data: any): Observable<any> {
     return this.http.put(`${protocolUrl}/save/${id}`, data);
   }
+
+  closeProtocol(id: any): Observable<any> {
+    return this.http.get(`${baseUrl}/close/${id}`);
+  }
+
+  reopenProtocol(id: any): Observable<any> {
+    return this.http.get(`${baseUrl}/reopen/${id}`);
+  }
 };

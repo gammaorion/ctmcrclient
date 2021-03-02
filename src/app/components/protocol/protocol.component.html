@@ -123,20 +123,38 @@
       </tr>
     </table>
 
-    <h4><button
-      type="submit"
-      [disabled]="!sessionForm.dirty && !dealActions.dirty"
-      class="btn btn-success mb-2"
-      (click)="saveProtocol()"
-    >
-      Save protocol
-    </button>&nbsp;&nbsp;<button
-      [disabled]="sessionForm.dirty || dealActions.dirty"
-      class="btn btn-warning mb-2"
-      (click)="closeProtocol()"
-    >
-      Close protocol
-    </button></h4>
+    <h4>
+      <ng-container *ngIf="!currentSession.isComplete">
+        <button
+        type="submit"
+        [disabled]="!sessionForm.dirty && !dealActions.dirty"
+        class="btn btn-success mb-2"
+        (click)="saveProtocol()"
+      >
+        Save protocol
+      </button>&nbsp;&nbsp;<button
+        [disabled]="sessionForm.dirty || dealActions.dirty"
+        class="btn btn-warning mb-2"
+        (click)="closeProtocol()"
+      >
+        Close protocol
+      </button>
+    </ng-container>
+    <ng-container *ngIf="currentSession.isComplete">
+      <button
+        class="btn btn-danger mb-2"
+        (click)="reopenProtocol()"
+      >
+        Reopen protocol
+      </button>
+    </ng-container>
+
+    <a class="btn btn-link" routerLink="/sessionchart/{{ currentSession.tournamentId }}">
+      To Session Chart
+    </a>
+
+    </h4>
+    <p>{{ protocolMessage }}</p>
   </div>
 
   <div *ngIf="!loadComplete">

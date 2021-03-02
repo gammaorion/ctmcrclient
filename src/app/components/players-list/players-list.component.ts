@@ -28,7 +28,6 @@ export class PlayersListComponent implements OnInit {
             let result = p1.surname > p2.surname;
             return result ? 1 : (p1.surname < p2.surname ? -1 : 0);
           });
-          console.log("Successfully retrieved players");
         },
         error => {
           console.log(error);
